@@ -47,12 +47,7 @@ UploadData <- navbarPage(theme = shinytheme("flatly"),
                        ),
                        column(1," "),
                        
-), DataExp, 
-footer = tags$div(
-  class = "footer",h3(p(style="color:black;text-align:left", 
-                        tags$img(src="https://media.slid.es/uploads/1121994/images/6529504/minsa.jpg",width="190px",height="70px"))),
-  tags$style(".footer{position:absolute;bottom:0; width:100%;}"))
-)
+), DataExp)
 
 
 

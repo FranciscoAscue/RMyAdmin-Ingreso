@@ -21,7 +21,7 @@ ui <- fluidPage( title = "RMyAdmin-Ingreso",
                  div(class = "pull-right", shinyauthr::logoutUI(id = "logout")),
                  
                  # login section
-                 shinyauthr::loginUI(id = "login", title = h3(icon("biohazard"),"RMyAdmin"), 
+                 shinyauthr::loginUI(id = "login", title = h3(icon("server"),icon("biohazard"),"RMyAdmin - Ingreso"), 
                                      user_title = "Usuario", pass_title = "Contraseña"),
                  
                  uiOutput("Page") )
@@ -74,7 +74,7 @@ server <- function(input, output, session) {
                                            options = list(scrollX = TRUE),
                                            rownames = FALSE, server = FALSE, escape = FALSE, selection = 'none')
   output$SqlInput <- DT::renderDataTable(inputData(), extensions = 'Buttons',
-                                         options = list( dom = 'Blfrtip', buttons = c('copy', 'excel')),
+                                         options = list( pageLength = 25, dom = 'Blfrtip', buttons = c('copy', 'excel')),
                                          rownames = FALSE, server = FALSE, escape = FALSE)
   
   ############################################################################################################################################################ 
@@ -84,8 +84,9 @@ server <- function(input, output, session) {
       tmp <- input$Oficio 
       updateTextInput(session, "Oficio", value = NA)
       updateTextInput(session, "Oficio", value = tmp)
+      updateTextInput(session, "Netlab", value = NA)
       output$SqlInput <- DT::renderDataTable(inputData(), extensions = 'Buttons',
-                                               options = list( dom = 'Blfrtip', buttons = c('copy', 'excel')),
+                                               options = list( pageLength = 25, dom = 'Blfrtip', buttons = c('copy', 'excel')),
                                                rownames = FALSE, server = FALSE, escape = FALSE, selection = 'none')
     },
     
@@ -142,8 +143,8 @@ server <- function(input, output, session) {
     motivo <- inputData()[edit_row, ][["MOTIVO"]]
     
     shiny::modalDialog(
-      title = h3(sql_id),
-      column(12,
+      title = h3("Cod. Netlab :", sql_id),
+      column(12,style = "background-color:#AED6F1;",
       column(6,
           numericInput(inputId = "ct",
                        label = "Ingresar CT",
@@ -155,7 +156,7 @@ server <- function(input, output, session) {
                          value = ct2, 
                          width = "200px")),
       ),
-      column(12, 
+      column(12, style = "background-color:#82E0AA;",#82E0AA 
       column(6,
           dateInput(inputId = "fecha_tm",
                     label = "Fecha de toma de muestra",
@@ -172,8 +173,7 @@ server <- function(input, output, session) {
                                    "CLINICAS_PRIVADAS",
                                    "BARRIDO","NULL"),
                       selected = motivo)),
-
-      ), easyClose = TRUE,
+      ), column(12, h3(" ")), easyClose = TRUE,
       footer = div(
         shiny::actionButton(inputId = "final_edit",
                             label   = "Ingresar",
