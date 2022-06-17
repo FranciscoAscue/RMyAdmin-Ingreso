@@ -15,13 +15,11 @@ create_btns <- function(x) {
                      ))
 }
 
-
-
-ui <- fluidPage( title = "RMyAdmin-Ingreso",  
+ui <- fluidPage( title = "Ingreso Datos",  
                  div(class = "pull-right", shinyauthr::logoutUI(id = "logout")),
                  
                  # login section
-                 shinyauthr::loginUI(id = "login", title = h3(icon("server"),icon("biohazard"),"RMyAdmin - Ingreso"), 
+                 shinyauthr::loginUI(id = "login", title = h3(icon("server"),icon("barcode"),"Ingreso de Datos COVID"), 
                                      user_title = "Usuario", pass_title = "Contraseña"),
                  
                  uiOutput("Page") )
@@ -160,7 +158,7 @@ server <- function(input, output, session) {
       column(6,
           dateInput(inputId = "fecha_tm",
                     label = "Fecha de toma de muestra",
-                    language = "es", value = fecha_tm , min = "2020-01-01", max = "2022-05-28"
+                    language = "es", value = fecha_tm , min = "2020-01-01", max = "2023-05-28"
                     )),
       column(6,   
           selectInput(inputId = "motivo",
@@ -171,7 +169,7 @@ server <- function(input, output, session) {
                                    "ESPECIAL HOSPITALIZADOS", 
                                    "VARIANTE", 
                                    "CLINICAS_PRIVADAS",
-                                   "BARRIDO","NULL"),
+                                   "SYNLAB","NULL"),
                       selected = motivo)),
       ), column(12, h3(" ")), easyClose = TRUE,
       footer = div(
