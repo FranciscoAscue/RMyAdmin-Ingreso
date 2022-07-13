@@ -5,7 +5,7 @@ library(DBI)
 library(RMySQL)
 
 ## data from MySQL
-metadata_sql <- function(netlab){
+metadata_sql <- function(netlab, corrida = 0, placa = "placa1"){
   
   con <- dbConnect(MySQL(),
                    user = 'ingreso',
@@ -14,8 +14,13 @@ metadata_sql <- function(netlab){
                    dbname = 'seqcoviddb')
   
   
-  query = paste0("SELECT NUMERACION_PLACA,NETLAB,OFICIO,CT,FECHA_TM,PROCEDENCIA,APELLIDO_NOMBRE,DNI_CE,VACUNADO,MOTIVO FROM `metadata` WHERE `NETLAB` ='",netlab,"' ;")
-
+  if( nchar(netlab) <= 2){
+    query = paste0("SELECT NUMERACION_PLACA, NETLAB, OFICIO, CT, FECHA_TM, MOTIVO, PLACA, CORRIDA FROM `metadata`  WHERE `CORRIDA` = '",corrida
+                   ,"' AND `PLACA` = '",placa,"' ORDER BY `metadata`.`NUMERACION_PLACA` ASC;")
+  }else{
+    query = paste0("SELECT NETLAB,OFICIO,CT,FECHA_TM,CORRIDA,PLACA,NUMERACION_PLACA,MOTIVO FROM `metadata` WHERE `NETLAB` LIKE '%",netlab,"%' ;")
+  }
+  
   dbSendQuery(con, "SET NAMES utf8mb4;")
   on.exit(dbDisconnect(con))
   rs = dbSendQuery(con, query);

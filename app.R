@@ -44,7 +44,7 @@ server <- function(input, output, session) {
   
   
   mysql_explore <- reactive({
-    data <- metadata_sql(netlab = input$BNetlab)
+    data <- metadata_sql(netlab = input$BNetlab, corrida = input$FCorrida, placa = input$Placa)
     data # <- data[,-c(6, 20, 22,24,25,29)]
   })
   
@@ -57,7 +57,7 @@ server <- function(input, output, session) {
   })
   
   inputData <- reactive({
-    req(input$Guardar)
+    req(input$Guardar | input$Buscar)
     data <- metadaupdate(input$Oficio)
     x <- create_btns(data$NETLAB)
     data <- data %>%
@@ -68,14 +68,25 @@ server <- function(input, output, session) {
 
   ############################################################################################################################################################
   
-  output$tablemysql <- DT::renderDataTable(mysql_explore(),
-                                           options = list(scrollX = TRUE),
-                                           rownames = FALSE, server = FALSE, escape = FALSE, selection = 'none')
+  output$tablemysql <- DT::renderDataTable(mysql_explore(),extensions = 'Buttons',
+                                           options = list( pageLength = 25, dom = 'Blfrtip', buttons = c('copy', 'excel')),
+                                           rownames = FALSE, server = FALSE, escape = FALSE)
+  
   output$SqlInput <- DT::renderDataTable(inputData(), extensions = 'Buttons',
-                                         options = list( pageLength = 25, dom = 'Blfrtip', buttons = c('copy', 'excel')),
-                                         rownames = FALSE, server = FALSE, escape = FALSE)
+                                           options = list( pageLength = 25, dom = 'Blfrtip', buttons = c('copy', 'excel')),
+                                           rownames = FALSE, server = FALSE, escape = FALSE)
   
   ############################################################################################################################################################ 
+  
+  shiny::observeEvent(input$Buscar, {
+    shiny::req(!is.null(input$current_id) &
+                 stringr::str_detect(input$current_id,pattern = "delete"))
+    output$SqlInput <- DT::renderDataTable(inputData(), extensions = 'Buttons',
+                                           options = list( pageLength = 25, dom = 'Blfrtip', buttons = c('copy', 'excel')),
+                                           rownames = FALSE, server = FALSE, escape = FALSE)
+  })
+  
+  
   observeEvent(input$Guardar,{
     tryCatch({
       metadataSendquery(inputSQL()$nt,inputSQL()$of)
